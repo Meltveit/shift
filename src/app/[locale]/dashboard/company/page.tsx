@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -27,19 +28,64 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCollection } from "@/firebase";
+import { useCollection, useFirestore, useUser } from "@/firebase";
 import type { Employee } from "@/lib/types";
+import { addDoc, collection } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
+import { EmployeeForm, type EmployeeFormValues } from "./employee-form";
 
 export default function CompanyPage() {
-  const { data: employees, loading, error } = useCollection<Employee>('companies/cpn_RND/employees');
+  const user = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // TODO: Replace with dynamic company ID
+  const companyId = "cpn_RND";
+  const employeesPath = user ? `companies/${companyId}/employees` : undefined;
+  const { data: employees, loading, error } = useCollection<Employee>(employeesPath);
 
   const locations = [
     { name: "Main Street Cafe", address: "123 Main St, Anytown, USA" },
     { name: "Downtown Brew", address: "456 Oak Ave, Anytown, USA" },
   ];
+
+  const handleAddEmployee = async (values: EmployeeFormValues) => {
+    if (!firestore || !user) return;
+
+    try {
+      const employeesCollection = collection(firestore, `companies/${companyId}/employees`);
+      await addDoc(employeesCollection, {
+        ...values,
+        // Add a placeholder avatar for now
+        avatarUrl: `https://picsum.photos/seed/${Math.random()}/100/100`
+      });
+      toast({
+        title: "Employee Added",
+        description: `${values.name} has been added to your company.`,
+      });
+      setIsDialogOpen(false);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not add employee. Please try again.",
+      });
+    }
+  };
+
 
   return (
     <>
@@ -55,12 +101,25 @@ export default function CompanyPage() {
                 <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <div className="ml-auto flex items-center gap-2">
-                <Button size="sm" className="h-8 gap-1">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Employee
-                  </span>
-                </Button>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="h-8 gap-1">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Add Employee
+                    </span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Employee</DialogTitle>
+                    <DialogDescription>
+                      Fill in the details below to add a new team member.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <EmployeeForm onSubmit={handleAddEmployee} />
+                </DialogContent>
+              </Dialog>
             </div>
         </div>
         <TabsContent value="employees">
