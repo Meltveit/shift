@@ -10,6 +10,27 @@ export default function PricingPage() {
   const nav = useTranslations('Navigation');
   
   const tiers = [
+     {
+      name: t('freeTierName'),
+      price: t('freeTierPrice'),
+      priceDescription: t('priceDescription'),
+      description: t('freeTierDescription'),
+      features: [
+        { text: t('featureEmployees'), value: t('freeTierFeature1') },
+        { text: t('featureLocations'), value: t('freeTierFeature2') },
+        { text: t('featureScheduling'), included: true },
+        { text: t('featureClockIn'), included: true },
+        { text: t('featureTimeCalc'), included: true },
+        { text: t('featureNotifications'), included: false },
+        { text: t('featureSwaps'), included: false },
+        { text: t('featureTimeOff'), included: false },
+        { text: t('featureAvailability'), included: false },
+        { text: t('featureReports'), included: false },
+        { text: t('featureRoles'), included: false },
+        { text: t('featureAi'), included: false },
+      ],
+      cta: t('freeTierCTA')
+    },
     {
       name: t('starterTierName'),
       price: t('starterTierPrice'),
@@ -113,7 +134,7 @@ export default function PricingPage() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto mt-16 grid max-w-md gap-8 sm:max-w-2xl sm:grid-cols-2 lg:max-w-none lg:grid-cols-3">
+            <div className="mx-auto mt-16 grid max-w-md gap-8 sm:max-w-2xl sm:grid-cols-2 lg:max-w-none lg:grid-cols-4">
               {tiers.map((tier) => (
                 <Card key={tier.name} className="flex flex-col">
                   <CardHeader>
@@ -123,7 +144,7 @@ export default function PricingPage() {
                   <CardContent className="flex-1 space-y-6">
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-bold">{tier.price}</span>
-                      <span className="text-muted-foreground">{tier.priceDescription}</span>
+                      {tier.name !== t('freeTierName') && <span className="text-muted-foreground">{tier.priceDescription}</span>}
                     </div>
                     <ul className="space-y-2 text-sm">
                       {tier.features.map((feature, index) => (

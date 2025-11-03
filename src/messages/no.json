@@ -43,18 +43,25 @@
     "pricing": "Priser",
     "priceDescription": "/ måned",
 
+    "freeTierName": "Gratis",
+    "freeTierPrice": "0 kr",
+    "freeTierDescription": "For enkeltpersoner og små team.",
+    "freeTierFeature1": "3",
+    "freeTierFeature2": "1",
+    "freeTierCTA": "Kom i gang",
+
     "starterTierName": "Starter",
     "starterTierPrice": "149 kr",
     "starterTierDescription": "For små team som nettopp har startet.",
-    "starterTierFeature1": "5",
+    "starterTierFeature1": "10",
     "starterTierFeature2": "1",
     "starterTierCTA": "Start 14-dagers prøveperiode",
 
     "proTierName": "Profesjonell",
     "proTierPrice": "279 kr",
     "proTierDescription": "For voksende team som trenger mer kraft.",
-    "proTierFeature1": "20",
-    "proTierFeature2": "3",
+    "proTierFeature1": "25",
+    "proTierFeature2": "5",
     "proTierCTA": "Start 14-dagers prøveperiode",
 
     "businessTierName": "Business",

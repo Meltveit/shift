@@ -43,18 +43,25 @@
     "pricing": "Pricing",
     "priceDescription": "/ month",
 
+    "freeTierName": "Free",
+    "freeTierPrice": "$0",
+    "freeTierDescription": "For individuals and small teams.",
+    "freeTierFeature1": "3",
+    "freeTierFeature2": "1",
+    "freeTierCTA": "Get Started",
+
     "starterTierName": "Starter",
     "starterTierPrice": "$15",
     "starterTierDescription": "For small teams getting started.",
-    "starterTierFeature1": "5",
+    "starterTierFeature1": "10",
     "starterTierFeature2": "1",
     "starterTierCTA": "Start 14-day trial",
 
     "proTierName": "Professional",
     "proTierPrice": "$29",
     "proTierDescription": "For growing teams that need more power.",
-    "proTierFeature1": "20",
-    "proTierFeature2": "3",
+    "proTierFeature1": "25",
+    "proTierFeature2": "5",
     "proTierCTA": "Start 14-day trial",
 
     "businessTierName": "Business",
