@@ -122,7 +122,7 @@ export default function DashboardLayout({
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link href="/">Log out</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link href="/login">Log out</Link></DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarFooter>
