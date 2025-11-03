@@ -3,47 +3,51 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Check } from 'lucide-react';
+import {useTranslations} from 'next-intl';
 
 export default function PricingPage() {
+  const t = useTranslations('PricingPage');
+  const nav = useTranslations('Navigation');
+  
   const tiers = [
     {
-      name: 'Free',
-      price: '$0',
-      priceDescription: 'per user/month',
-      description: 'For small teams just getting started.',
+      name: t('freeTierName'),
+      price: t('freeTierPrice'),
+      priceDescription: t('freeTierPriceDescription'),
+      description: t('freeTierDescription'),
       features: [
-        'Up to 10 users',
-        'Basic scheduling',
-        'Time off requests',
-        'Mobile app access'
+        t('freeTierFeature1'),
+        t('freeTierFeature2'),
+        t('freeTierFeature3'),
+        t('freeTierFeature4')
       ],
-      cta: 'Get Started'
+      cta: t('freeTierCTA')
     },
     {
-      name: 'Pro',
-      price: '$8',
-      priceDescription: 'per user/month',
-      description: 'For growing teams that need more power.',
+      name: t('proTierName'),
+      price: t('proTierPrice'),
+      priceDescription: t('proTierPriceDescription'),
+      description: t('proTierDescription'),
       features: [
-        'Everything in Free',
-        'Unlimited users',
-        'Shift swapping',
-        'Reporting & analytics'
+        t('proTierFeature1'),
+        t('proTierFeature2'),
+        t('proTierFeature3'),
+        t('proTierFeature4')
       ],
-      cta: 'Start Free Trial'
+      cta: t('proTierCTA')
     },
     {
-      name: 'Business',
-      price: '$15',
-      priceDescription: 'per user/month',
-      description: 'For businesses that need advanced features.',
+      name: t('businessTierName'),
+      price: t('businessTierPrice'),
+      priceDescription: t('businessTierPriceDescription'),
+      description: t('businessTierDescription'),
       features: [
-        'Everything in Pro',
-        'AI schedule suggestions',
-        'Labor cost optimization',
-        'Priority support'
+        t('businessTierFeature1'),
+        t('businessTierFeature2'),
+        t('businessTierFeature3'),
+        t('businessTierFeature4')
       ],
-      cta: 'Contact Sales'
+      cta: t('businessTierCTA')
     }
   ];
 
@@ -56,17 +60,17 @@ export default function PricingPage() {
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
           <Link href="/about" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            About
+            {nav('about')}
           </Link>
           <Link href="/pricing" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Pricing
+            {nav('pricing')}
           </Link>
           <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Login
+            {nav('login')}
           </Link>
           <Button asChild>
             <Link href="/signup" prefetch={false}>
-              Sign Up
+              {nav('signup')}
             </Link>
           </Button>
         </nav>
@@ -76,12 +80,12 @@ export default function PricingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Pricing</div>
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">{t('pricing')}</div>
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">
-                  Find the perfect plan for your team
+                  {t('title')}
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Choose a plan that fits your needs. All plans come with a 14-day free trial.
+                  {t('description')}
                 </p>
               </div>
             </div>
@@ -95,7 +99,7 @@ export default function PricingPage() {
                   <CardContent className="flex-1 space-y-6">
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-bold">{tier.price}</span>
-                      {tier.price !== '$0' && <span className="text-muted-foreground">{tier.priceDescription}</span>}
+                      {tier.price !== '$0' && tier.price !== '0 kr' && <span className="text-muted-foreground">{tier.priceDescription}</span>}
                     </div>
                     <ul className="space-y-2 text-sm">
                       {tier.features.map((feature) => (

@@ -2,8 +2,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import Image from 'next/image';
+import {useTranslations} from 'next-intl';
 
 export default function AboutPage() {
+  const t = useTranslations('AboutPage');
+  const nav = useTranslations('Navigation');
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center bg-background">
@@ -13,17 +16,17 @@ export default function AboutPage() {
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
           <Link href="/about" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            About
+            {nav('about')}
           </Link>
           <Link href="/pricing" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Pricing
+            {nav('pricing')}
           </Link>
           <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Login
+            {nav('login')}
           </Link>
           <Button asChild>
             <Link href="/signup" prefetch={false}>
-              Sign Up
+              {nav('signup')}
             </Link>
           </Button>
         </nav>
@@ -33,12 +36,12 @@ export default function AboutPage() {
           <div className="container px-4 md:px-6">
             <div className="grid items-center gap-6 lg:grid-cols-2 lg:gap-12">
               <div className="space-y-4">
-                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">About Us</div>
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">{t('aboutUs')}</div>
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">
-                  Our Mission to Simplify Scheduling
+                  {t('missionTitle')}
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  At Shift, we believe that managing employee schedules shouldn't be a complex and time-consuming task. Our mission is to provide an intuitive, powerful, and AI-driven platform that empowers businesses to create optimal schedules, manage time off seamlessly, and handle shift swaps with ease. We're dedicated to helping you save time, reduce costs, and keep your team happy.
+                  {t('missionDescription')}
                 </p>
               </div>
               <Image
@@ -56,31 +59,31 @@ export default function AboutPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Meet the Team</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">{t('meetTeamTitle')}</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  We are a passionate group of developers, designers, and innovators committed to building the future of workforce management.
+                  {t('meetTeamDescription')}
                 </p>
               </div>
               <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
                 <div className="flex flex-col items-center space-y-2">
                   <Image src="https://picsum.photos/seed/person1/200/200" width={140} height={140} alt="Team Member" className="rounded-full" data-ai-hint="person portrait" />
                   <div className="text-center">
-                    <h3 className="text-lg font-bold">Jane Doe</h3>
-                    <p className="text-muted-foreground">Co-Founder & CEO</p>
+                    <h3 className="text-lg font-bold">{t('teamMember1Name')}</h3>
+                    <p className="text-muted-foreground">{t('teamMember1Role')}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center space-y-2">
                    <Image src="https://picsum.photos/seed/person2/200/200" width={140} height={140} alt="Team Member" className="rounded-full" data-ai-hint="man portrait" />
                   <div className="text-center">
-                    <h3 className="text-lg font-bold">John Smith</h3>
-                    <p className="text-muted-foreground">Co-Founder & CTO</p>
+                    <h3 className="text-lg font-bold">{t('teamMember2Name')}</h3>
+                    <p className="text-muted-foreground">{t('teamMember2Role')}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center space-y-2">
                    <Image src="https://picsum.photos/seed/person3/200/200" width={140} height={140} alt="Team Member" className="rounded-full" data-ai-hint="woman portrait" />
                   <div className="text-center">
-                    <h3 className="text-lg font-bold">Sarah Lee</h3>
-                    <p className="text-muted-foreground">Lead Designer</p>
+                    <h3 className="text-lg font-bold">{t('teamMember3Name')}</h3>
+                    <p className="text-muted-foreground">{t('teamMember3Role')}</p>
                   </div>
                 </div>
               </div>

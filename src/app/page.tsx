@@ -4,8 +4,12 @@ import { Icons } from '@/components/icons';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarCheck, Repeat, Clock, Bot } from 'lucide-react';
 import Image from 'next/image';
+import {useTranslations} from 'next-intl';
 
 export default function LandingPage() {
+  const t = useTranslations('LandingPage');
+  const nav = useTranslations('Navigation');
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center bg-background">
@@ -15,17 +19,17 @@ export default function LandingPage() {
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
           <Link href="/about" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            About
+            {nav('about')}
           </Link>
           <Link href="/pricing" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Pricing
+            {nav('pricing')}
           </Link>
           <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Login
+            {nav('login')}
           </Link>
           <Button asChild>
             <Link href="/signup" prefetch={false}>
-              Sign Up
+              {nav('signup')}
             </Link>
           </Button>
         </nav>
@@ -37,17 +41,16 @@ export default function LandingPage() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
-                    Employee Scheduling, Simplified.
+                    {t('heroTitle')}
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Shift is a modern, intuitive platform for managing employee schedules, time off, and shift swaps,
-                    powered by AI.
+                    {t('heroDescription')}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button asChild size="lg">
                     <Link href="/signup" prefetch={false}>
-                      Get Started
+                      {t('getStarted')}
                     </Link>
                   </Button>
                 </div>
@@ -67,12 +70,12 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Key Features</div>
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">{t('keyFeatures')}</div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">
-                  Everything you need to manage your team
+                  {t('featuresTitle')}
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Our platform provides powerful tools to streamline your scheduling process and keep your team happy.
+                  {t('featuresDescription')}
                 </p>
               </div>
             </div>
@@ -83,12 +86,11 @@ export default function LandingPage() {
                      <div className="bg-primary text-primary-foreground p-3 rounded-md">
                         <CalendarCheck className="h-6 w-6" />
                      </div>
-                    <CardTitle className="text-xl">Intuitive Scheduling</CardTitle>
+                    <CardTitle className="text-xl">{t('feature1Title')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
-                      Easily create, manage, and view weekly schedules with a drag-and-drop interface. Keep track of
-                      everyone's shifts in one place.
+                      {t('feature1Description')}
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -99,11 +101,11 @@ export default function LandingPage() {
                      <div className="bg-primary text-primary-foreground p-3 rounded-md">
                         <Repeat className="h-6 w-6" />
                      </div>
-                    <CardTitle className="text-xl">Shift Swaps</CardTitle>
+                    <CardTitle className="text-xl">{t('feature2Title')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
-                      Allow employees to request shift swaps with their colleagues, subject to manager approval.
+                      {t('feature2Description')}
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -114,11 +116,11 @@ export default function LandingPage() {
                     <div className="bg-primary text-primary-foreground p-3 rounded-md">
                         <Clock className="h-6 w-6" />
                      </div>
-                    <CardTitle className="text-xl">Time Off Management</CardTitle>
+                    <CardTitle className="text-xl">{t('feature3Title')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
-                      Employees can request time off, and managers can approve or deny requests, all within the app.
+                      {t('feature3Description')}
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -129,12 +131,11 @@ export default function LandingPage() {
                      <div className="bg-primary text-primary-foreground p-3 rounded-md">
                         <Bot className="h-6 w-6" />
                      </div>
-                    <CardTitle className="text-xl">AI-Powered Suggestions</CardTitle>
+                    <CardTitle className="text-xl">{t('feature4Title')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
-                      Leverage AI to generate optimal shift plans based on employee availability, demand forecasts, and
-                      labor costs.
+                     {t('feature4Description')}
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -144,13 +145,13 @@ export default function LandingPage() {
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">&copy; 2024 Shift. All rights reserved.</p>
+        <p className="text-xs text-muted-foreground">{t('footerRights')}</p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
-            Terms of Service
+            {t('footerTerms')}
           </Link>
           <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
-            Privacy
+            {t('footerPrivacy')}
           </Link>
         </nav>
       </footer>
