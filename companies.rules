@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Companies can only be read or written by the user who owns the document.
+    match /companies/{companyId} {
+      allow read, write: if request.auth.uid == resource.data.ownerUid;
+
+      // Any authenticated user belonging to the company can read/write to subcollections.
+      // This is a broad rule and should be refined for production.
+      match /{allSubcollections}/{docId} {
+        allow read, write: if request.auth != null && exists(/databases/$(database)/documents/companies/$(companyId)) && get(/databases/$(database)/documents/companies/$(companyId)).data.ownerUid == request.auth.uid;
+      }
+    }
+  }
+}

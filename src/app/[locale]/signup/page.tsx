@@ -26,8 +26,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useTranslations } from 'next-intl';
-import { useAuth } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -36,6 +37,7 @@ export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const auth = useAuth();
+  const firestore = useFirestore();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
@@ -85,7 +87,7 @@ export default function SignupPage() {
       });
       return;
     }
-    if (!auth) {
+    if (!auth || !firestore) {
         toast({
         variant: 'destructive',
         title: 'Authentication service not available',
@@ -97,19 +99,22 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
+      // 1. Create user account
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: fullName });
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: fullName });
       
-      // Here you would typically save the other form data (company info, etc.) to Firestore
-      // For now, we'll just log it.
-      console.log({
-        uid: userCredential.user.uid,
-        companyName,
-        industry,
-        employeeCount,
-        phone,
-        position,
+      // 2. Create company document in Firestore
+      const companiesCollection = collection(firestore, 'companies');
+      await addDoc(companiesCollection, {
+        name: companyName,
+        industry: industry,
+        employeeCount: employeeCount,
+        phone: phone,
+        ownerUid: user.uid
       });
+
+      // You could also add the owner as the first employee here if needed
 
       toast({
         title: 'Account Created!',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -51,7 +51,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCollection, useFirestore, useUser } from "@/firebase";
 import type { Employee } from "@/lib/types";
-import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, deleteDoc, getDocs, query, where } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { EmployeeForm, type EmployeeFormValues } from "./employee-form";
 
@@ -59,14 +59,31 @@ export default function CompanyPage() {
   const user = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const [companyId, setCompanyId] = useState<string | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
-  // TODO: Replace with dynamic company ID
-  const companyId = "cpn_RND";
-  const employeesPath = user ? `companies/${companyId}/employees` : undefined;
+  useEffect(() => {
+    const findCompany = async () => {
+      if (user && firestore) {
+        const companiesCollection = collection(firestore, 'companies');
+        const q = query(companiesCollection, where('ownerUid', '==', user.uid));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          // Assuming one user belongs to one company for now
+          setCompanyId(querySnapshot.docs[0].id);
+        } else {
+          // Handle case where no company is found for the user
+          console.log("No company found for this user.");
+        }
+      }
+    };
+    findCompany();
+  }, [user, firestore]);
+
+  const employeesPath = companyId ? `companies/${companyId}/employees` : undefined;
   const { data: employees, loading, error } = useCollection<Employee>(employeesPath);
 
   const locations = [
@@ -75,7 +92,7 @@ export default function CompanyPage() {
   ];
 
   const handleAddEmployee = async (values: EmployeeFormValues) => {
-    if (!firestore || !user) return;
+    if (!firestore || !companyId) return;
 
     try {
       const employeesCollection = collection(firestore, `companies/${companyId}/employees`);
@@ -99,7 +116,7 @@ export default function CompanyPage() {
   };
 
   const handleEditEmployee = async (values: EmployeeFormValues) => {
-    if (!firestore || !user || !selectedEmployee) return;
+    if (!firestore || !companyId || !selectedEmployee) return;
 
     try {
         const employeeDoc = doc(firestore, `companies/${companyId}/employees`, selectedEmployee.id);
@@ -121,7 +138,7 @@ export default function CompanyPage() {
   };
 
   const handleDeleteEmployee = async () => {
-    if (!firestore || !user || !selectedEmployee) return;
+    if (!firestore || !companyId || !selectedEmployee) return;
 
     try {
         const employeeDoc = doc(firestore, `companies/${companyId}/employees`, selectedEmployee.id);
@@ -168,7 +185,7 @@ export default function CompanyPage() {
             <div className="ml-auto flex items-center gap-2">
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="h-8 gap-1">
+                  <Button size="sm" className="h-8 gap-1" disabled={!companyId}>
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Add Employee
@@ -198,7 +215,8 @@ export default function CompanyPage() {
             <CardContent>
               {loading && <p>Loading employees...</p>}
               {error && <p className="text-destructive">Error loading employees: {error.message}</p>}
-              {!loading && !error && (
+              {!loading && !error && !employees && <p>No company found. Please ensure you have created a company.</p>}
+              {!loading && !error && employees && (
                 <Table>
                   <TableHeader>
                     <TableRow>

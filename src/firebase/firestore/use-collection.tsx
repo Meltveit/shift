@@ -17,7 +17,7 @@ export function useCollection<T>(path?: string | null | undefined) {
   useEffect(() => {
     if (!firestore || !path) {
       setLoading(false);
-      setData([]);
+      setData(null); // Set to null instead of empty array when path is invalid
       return;
     }
 
