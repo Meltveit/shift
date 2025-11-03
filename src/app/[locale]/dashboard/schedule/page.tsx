@@ -23,7 +23,7 @@ import {
 import { getEmployeeById, shifts } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { DashboardHeader } from "@/components/dashboard-header";
-import AiSuggestions from "./ai-suggestions";
+import AiSuggestions from "./AiSuggestions";
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const timeSlots = Array.from({ length: 15 }, (_, i) => `${String(i + 7).padStart(2, '0')}:00`);
