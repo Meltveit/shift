@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { DashboardHeader } from "@/components/dashboard-header";
-import AiSuggestions from "./AiSuggestions";
+import AiSuggestions from "./ai-suggestions";
 import type { Employee, Shift } from "@/lib/types";
 import { useCollection, useUser, useFirestore } from '@/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
