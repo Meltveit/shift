@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import {useTranslations} from 'next-intl';
 
 export default function PricingPage() {
@@ -11,41 +11,65 @@ export default function PricingPage() {
   
   const tiers = [
     {
-      name: t('freeTierName'),
-      price: t('freeTierPrice'),
-      priceDescription: t('freeTierPriceDescription'),
-      description: t('freeTierDescription'),
+      name: t('starterTierName'),
+      price: t('starterTierPrice'),
+      priceDescription: t('priceDescription'),
+      description: t('starterTierDescription'),
       features: [
-        t('freeTierFeature1'),
-        t('freeTierFeature2'),
-        t('freeTierFeature3'),
-        t('freeTierFeature4')
+        { text: t('featureEmployees'), value: t('starterTierFeature1') },
+        { text: t('featureLocations'), value: t('starterTierFeature2') },
+        { text: t('featureScheduling'), included: true },
+        { text: t('featureClockIn'), included: true },
+        { text: t('featureTimeCalc'), included: true },
+        { text: t('featureNotifications'), included: true },
+        { text: t('featureSwaps'), included: false },
+        { text: t('featureTimeOff'), included: false },
+        { text: t('featureAvailability'), included: false },
+        { text: t('featureReports'), included: false },
+        { text: t('featureRoles'), included: false },
+        { text: t('featureAi'), included: false },
       ],
-      cta: t('freeTierCTA')
+      cta: t('starterTierCTA')
     },
     {
       name: t('proTierName'),
       price: t('proTierPrice'),
-      priceDescription: t('proTierPriceDescription'),
+      priceDescription: t('priceDescription'),
       description: t('proTierDescription'),
       features: [
-        t('proTierFeature1'),
-        t('proTierFeature2'),
-        t('proTierFeature3'),
-        t('proTierFeature4')
+        { text: t('featureEmployees'), value: t('proTierFeature1') },
+        { text: t('featureLocations'), value: t('proTierFeature2') },
+        { text: t('featureScheduling'), included: true },
+        { text: t('featureClockIn'), included: true },
+        { text: t('featureTimeCalc'), included: true },
+        { text: t('featureNotifications'), included: true },
+        { text: t('featureSwaps'), included: true },
+        { text: t('featureTimeOff'), included: true },
+        { text: t('featureAvailability'), included: true },
+        { text: t('featureReports'), included: true },
+        { text: t('featureRoles'), included: false },
+        { text: t('featureAi'), included: false },
       ],
       cta: t('proTierCTA')
     },
     {
       name: t('businessTierName'),
       price: t('businessTierPrice'),
-      priceDescription: t('businessTierPriceDescription'),
+      priceDescription: t('priceDescription'),
       description: t('businessTierDescription'),
-      features: [
-        t('businessTierFeature1'),
-        t('businessTierFeature2'),
-        t('businessTierFeature3'),
-        t('businessTierFeature4')
+       features: [
+        { text: t('featureEmployees'), value: t('businessTierFeature1') },
+        { text: t('featureLocations'), value: t('businessTierFeature2') },
+        { text: t('featureScheduling'), included: true },
+        { text: t('featureClockIn'), included: true },
+        { text: t('featureTimeCalc'), included: true },
+        { text: t('featureNotifications'), included: true },
+        { text: t('featureSwaps'), included: true },
+        { text: t('featureTimeOff'), included: true },
+        { text: t('featureAvailability'), included: true },
+        { text: t('featureReports'), included: true },
+        { text: t('featureRoles'), included: true },
+        { text: t('featureAi'), included: true },
       ],
       cta: t('businessTierCTA')
     }
@@ -99,13 +123,18 @@ export default function PricingPage() {
                   <CardContent className="flex-1 space-y-6">
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-bold">{tier.price}</span>
-                      {tier.price !== '$0' && tier.price !== '0 kr' && <span className="text-muted-foreground">{tier.priceDescription}</span>}
+                      <span className="text-muted-foreground">{tier.priceDescription}</span>
                     </div>
                     <ul className="space-y-2 text-sm">
-                      {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-primary" />
-                          <span>{feature}</span>
+                      {tier.features.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-2">
+                          {feature.included === true && <Check className="h-4 w-4 text-primary" />}
+                          {feature.included === false && <X className="h-4 w-4 text-muted-foreground" />}
+                          <span>
+                            {feature.text}
+                            {feature.value && `: `}
+                            <span className="font-semibold">{feature.value}</span>
+                          </span>
                         </li>
                       ))}
                     </ul>
