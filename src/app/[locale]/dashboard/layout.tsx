@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import {
   Bell,
@@ -35,12 +39,38 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Icons } from "@/components/icons";
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const auth = useAuth();
+  const user = useUser();
+
+  useEffect(() => {
+    if (user === null) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  const handleLogout = async () => {
+    if (!auth) return;
+    await signOut(auth);
+    router.push('/login');
+  };
+
+  if (!user) {
+    return (
+        <div className="flex h-screen items-center justify-center">
+            <p>Loading...</p>
+        </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen w-full">
@@ -100,11 +130,11 @@ export default function DashboardLayout({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="justify-start gap-3 w-full h-auto p-2">
                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://picsum.photos/seed/1/100/100" alt="Sarah Miller" />
-                      <AvatarFallback>SM</AvatarFallback>
+                      <AvatarImage src={user.photoURL || "https://picsum.photos/seed/1/100/100"} alt={user.displayName || 'User'} />
+                      <AvatarFallback>{user.displayName ? user.displayName.charAt(0) : 'U'}</AvatarFallback>
                     </Avatar>
                   <div className="text-left">
-                    <p className="font-medium text-sm">Sarah Miller</p>
+                    <p className="font-medium text-sm">{user.displayName || 'User'}</p>
                     <p className="text-xs text-muted-foreground">Admin</p>
                   </div>
                 </Button>
@@ -112,9 +142,9 @@ export default function DashboardLayout({
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">Sarah Miller</p>
+                    <p className="text-sm font-medium leading-none">{user.displayName || 'User'}</p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      sarah.m@example.com
+                      {user.email}
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -122,7 +152,7 @@ export default function DashboardLayout({
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link href="/login">Log out</Link></DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarFooter>
