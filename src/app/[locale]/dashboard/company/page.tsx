@@ -36,12 +36,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCollection, useFirestore, useUser } from "@/firebase";
 import type { Employee } from "@/lib/types";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { EmployeeForm, type EmployeeFormValues } from "./employee-form";
 
@@ -49,7 +59,10 @@ export default function CompanyPage() {
   const user = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
   // TODO: Replace with dynamic company ID
   const companyId = "cpn_RND";
@@ -68,14 +81,13 @@ export default function CompanyPage() {
       const employeesCollection = collection(firestore, `companies/${companyId}/employees`);
       await addDoc(employeesCollection, {
         ...values,
-        // Add a placeholder avatar for now
         avatarUrl: `https://picsum.photos/seed/${Math.random()}/100/100`
       });
       toast({
         title: "Employee Added",
         description: `${values.name} has been added to your company.`,
       });
-      setIsDialogOpen(false);
+      setIsAddDialogOpen(false);
     } catch (e) {
       console.error("Error adding document: ", e);
       toast({
@@ -86,6 +98,59 @@ export default function CompanyPage() {
     }
   };
 
+  const handleEditEmployee = async (values: EmployeeFormValues) => {
+    if (!firestore || !user || !selectedEmployee) return;
+
+    try {
+        const employeeDoc = doc(firestore, `companies/${companyId}/employees`, selectedEmployee.id);
+        await updateDoc(employeeDoc, values);
+        toast({
+            title: "Employee Updated",
+            description: `${values.name}'s information has been updated.`,
+        });
+        setIsEditDialogOpen(false);
+        setSelectedEmployee(null);
+    } catch (e) {
+        console.error("Error updating document: ", e);
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not update employee. Please try again.",
+        });
+    }
+  };
+
+  const handleDeleteEmployee = async () => {
+    if (!firestore || !user || !selectedEmployee) return;
+
+    try {
+        const employeeDoc = doc(firestore, `companies/${companyId}/employees`, selectedEmployee.id);
+        await deleteDoc(employeeDoc);
+        toast({
+            title: "Employee Deleted",
+            description: `${selectedEmployee.name} has been removed from your company.`,
+        });
+        setIsDeleteDialogOpen(false);
+        setSelectedEmployee(null);
+    } catch (e) {
+        console.error("Error deleting document: ", e);
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not delete employee. Please try again.",
+        });
+    }
+  };
+
+  const openEditDialog = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setIsEditDialogOpen(true);
+  }
+
+  const openDeleteDialog = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setIsDeleteDialogOpen(true);
+  }
 
   return (
     <>
@@ -101,7 +166,7 @@ export default function CompanyPage() {
                 <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <div className="ml-auto flex items-center gap-2">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" className="h-8 gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
@@ -180,8 +245,8 @@ export default function CompanyPage() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem>Edit</DropdownMenuItem>
-                              <DropdownMenuItem>Delete</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openEditDialog(employee)}>Edit</DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(employee)}>Delete</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -227,6 +292,35 @@ export default function CompanyPage() {
             </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Edit Employee Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>Edit Employee</DialogTitle>
+                  <DialogDescription>
+                      Update the details for {selectedEmployee?.name}.
+                  </DialogDescription>
+              </DialogHeader>
+              <EmployeeForm onSubmit={handleEditEmployee} defaultValues={selectedEmployee || undefined} />
+          </DialogContent>
+      </Dialog>
+
+      {/* Delete Employee Alert Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+              <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the employee record for {selectedEmployee?.name}.
+                  </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteEmployee} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+              </AlertDialogFooter>
+          </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
