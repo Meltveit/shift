@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -9,9 +13,7 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,32 +22,55 @@ import {
   FilePlus,
   Users,
 } from "lucide-react";
-import { getEmployeeById, shifts } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { DashboardHeader } from "@/components/dashboard-header";
 import AiSuggestions from "./AiSuggestions";
-import type { Employee } from "@/lib/types";
+import type { Employee, Shift } from "@/lib/types";
+import { useCollection, useUser, useFirestore } from '@/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const timeSlots = Array.from({ length: 15 }, (_, i) => `${String(i + 7).padStart(2, '0')}:00`);
 
 export default function SchedulePage() {
-    // Note: This page still uses mock data. It will be updated to use Firestore soon.
-    const mockEmployees: Employee[] = [
-        { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
-        { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
-        { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
-        { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
-        { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
-    ];
+  const user = useUser();
+  const firestore = useFirestore();
+  const [companyId, setCompanyId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const findCompany = async () => {
+      if (user && firestore) {
+        const companiesCollection = collection(firestore, 'companies');
+        const q = query(companiesCollection, where('ownerUid', '==', user.uid));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setCompanyId(querySnapshot.docs[0].id);
+        } else {
+          console.log("No company found for this user.");
+        }
+      }
+    };
+    findCompany();
+  }, [user, firestore]);
+
+  const employeesPath = companyId ? `companies/${companyId}/employees` : undefined;
+  const { data: employees, loading: loadingEmployees } = useCollection<Employee>(employeesPath);
+
+  const shiftsPath = companyId ? `companies/${companyId}/shifts` : undefined;
+  const { data: shifts, loading: loadingShifts } = useCollection<Shift>(shiftsPath);
+
+  const getEmployeeById = (id: string | undefined): Employee | undefined => {
+      if (!id || !employees) return undefined;
+      return employees.find(e => e.id === id);
+  }
 
   return (
     <>
       <DashboardHeader
         title="Weekly Schedule"
-        description="Drag-and-drop to create and manage shifts."
+        description="Manage and view your team's shifts."
       >
-        <Button>
+        <Button disabled={!companyId}>
           <FilePlus className="mr-2" />
           Create Shift
         </Button>
@@ -69,55 +94,59 @@ export default function SchedulePage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="relative overflow-auto">
-                <Table className="min-w-full">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-24">Time</TableHead>
-                      {days.map((day) => (
-                        <TableHead key={day}>{day}</TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {timeSlots.map((time) => (
-                      <TableRow key={time}>
-                        <TableCell className="font-medium">{time}</TableCell>
-                        {days.map((day) => {
-                          const shift = shifts.find(
-                            (s) => s.day === day && s.startTime === time
-                          );
-                          if (shift) {
-                            const employee = getEmployeeById(mockEmployees, shift.employeeId);
-                            const duration =
-                              (parseInt(shift.endTime.split(":")[0]) -
-                                parseInt(shift.startTime.split(":")[0]));
-                            return (
-                              <TableCell
-                                key={`${day}-${time}`}
-                                className="p-1 align-top"
-                                colSpan={1}
-                              >
-                                <div
-                                  className={`p-2 rounded-md text-slate-800 ${shift.color}`}
-                                  style={{
-                                    height: `${duration * 4}rem`, // 4rem per hour
-                                  }}
-                                >
-                                  <p className="font-bold text-sm">{employee?.name}</p>
-                                  <p className="text-xs">{shift.role}</p>
-                                </div>
-                              </TableCell>
-                            );
-                          }
-                          const isCovered = shifts.some(s => s.day === day && time > s.startTime && time < s.endTime);
-                          return isCovered ? null : <TableCell key={`${day}-${time}`} className="border-l"></TableCell>;
-                        })}
+              {loadingShifts || loadingEmployees ? (
+                <p>Loading schedule...</p>
+              ) : (
+                <div className="relative overflow-auto">
+                  <Table className="min-w-full">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-24">Time</TableHead>
+                        {days.map((day) => (
+                          <TableHead key={day}>{day}</TableHead>
+                        ))}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {timeSlots.map((time) => (
+                        <TableRow key={time}>
+                          <TableCell className="font-medium">{time}</TableCell>
+                          {days.map((day) => {
+                            const shift = shifts?.find(
+                              (s) => s.day === day && s.startTime === time
+                            );
+                            if (shift) {
+                              const employee = getEmployeeById(shift.employeeId);
+                              const duration =
+                                (parseInt(shift.endTime.split(":")[0]) -
+                                  parseInt(shift.startTime.split(":")[0]));
+                              return (
+                                <TableCell
+                                  key={`${day}-${time}`}
+                                  className="p-1 align-top"
+                                  colSpan={1}
+                                >
+                                  <div
+                                    className={`p-2 rounded-md text-slate-800 ${shift.color}`}
+                                    style={{
+                                      height: `${duration * 4}rem`, // 4rem per hour
+                                    }}
+                                  >
+                                    <p className="font-bold text-sm">{employee?.name}</p>
+                                    <p className="text-xs">{shift.role}</p>
+                                  </div>
+                                </TableCell>
+                              );
+                            }
+                            const isCovered = shifts?.some(s => s.day === day && time > s.startTime && time < s.endTime);
+                            return isCovered ? null : <TableCell key={`${day}-${time}`} className="border-l"></TableCell>;
+                          })}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -126,33 +155,29 @@ export default function SchedulePage() {
            <Card>
             <CardHeader>
               <CardTitle>Team View</CardTitle>
-               <CardDescription>Hours scheduled per employee.</CardDescription>
+               <CardDescription>Hours scheduled per employee this week.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground flex items-center gap-2"><Users /> Team</span>
                 <span className="text-muted-foreground">Hours</span>
               </div>
-               <div className="flex items-center justify-between">
-                <span>Sarah Miller</span>
-                <Badge variant="secondary">8h</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>David Chen</span>
-                <Badge variant="secondary">16h</Badge>
-              </div>
-               <div className="flex items-center justify-between">
-                <span>Maria Garcia</span>
-                <Badge variant="secondary">16h</Badge>
-              </div>
-               <div className="flex items-center justify-between">
-                <span>Kevin Smith</span>
-                <Badge variant="secondary">16h</Badge>
-              </div>
-               <div className="flex items-center justify-between">
-                <span>Emily Johnson</span>
-                <Badge variant="secondary">16h</Badge>
-              </div>
+              {employees?.map(employee => {
+                  const employeeShifts = shifts?.filter(s => s.employeeId === employee.id) || [];
+                  const hours = employeeShifts.reduce((acc, shift) => {
+                      const start = parseInt(shift.startTime.split(':')[0]);
+                      const end = parseInt(shift.endTime.split(':')[0]);
+                      return acc + (end - start);
+                  }, 0);
+
+                  return (
+                     <div key={employee.id} className="flex items-center justify-between">
+                        <span>{employee.name}</span>
+                        <Badge variant="secondary">{hours}h</Badge>
+                    </div>
+                  )
+              })}
+
             </CardContent>
           </Card>
         </div>

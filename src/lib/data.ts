@@ -1,19 +1,11 @@
+
 import type { Employee, Shift, TimeOffRequest, SwapRequest } from './types';
 
 // This file is now being phased out. Data is being migrated to Firebase Firestore.
 // You can remove data from here as it's replaced by live data in the components.
 
-export const shifts: Shift[] = [
-  { id: 's1', employeeId: '2', day: 'Mon', startTime: '08:00', endTime: '16:00', role: 'Barista', color: 'bg-emerald-200' },
-  { id: 's2', employeeId: '3', day: 'Mon', startTime: '09:00', endTime: '17:00', role: 'Cashier', color: 'bg-sky-200' },
-  { id: 's3', employeeId: '4', day: 'Mon', startTime: '11:00', endTime: '19:00', role: 'Chef', color: 'bg-rose-200' },
-  { id: 's4', employeeId: '5', day: 'Tue', startTime: '08:00', endTime: '16:00', role: 'Barista', color: 'bg-emerald-200' },
-  { id: 's5', employeeId: '2', day: 'Wed', startTime: '09:00', endTime: '17:00', role: 'Barista', color: 'bg-emerald-200' },
-  { id: 's6', employeeId: '3', day: 'Wed', startTime: '12:00', endTime: '20:00', role: 'Cashier', color: 'bg-sky-200' },
-  { id: 's7', employeeId: '4', day: 'Thu', startTime: '09:00', endTime: '17:00', role: 'Chef', color: 'bg-rose-200' },
-  { id: 's8', employeeId: '5', day: 'Fri', startTime: '10:00', endTime: '18:00', role: 'Barista', color: 'bg-emerald-200' },
-  { id: 's9', employeeId: '1', day: 'Fri', startTime: '09:00', endTime: '17:00', role: 'Manager', color: 'bg-amber-200' },
-];
+// Note: `shifts` array has been removed as it is now fetched from Firestore.
+export const shifts: Shift[] = [];
 
 export const timeOffRequests: TimeOffRequest[] = [
   { id: 'to1', employeeId: '2', startDate: new Date('2024-08-05'), endDate: new Date('2024-08-07'), type: 'Vacation', status: 'Approved' },

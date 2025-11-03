@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -37,6 +38,8 @@ export default function TimeOffPage() {
   ];
     // Note: This page still uses mock data. It will be updated to use Firestore soon.
     const mockEmployees: Employee[] = [
+        // This mock data is now removed from its original source and is temporarily here
+        // so the page doesn't break. It will be replaced with Firestore data soon.
         { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
         { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
         { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
