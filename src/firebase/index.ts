@@ -5,6 +5,7 @@ import { firebaseConfig } from './config';
 import { useUser, type User } from './auth/use-user';
 import { FirebaseProvider, useFirebase, useFirebaseApp, useFirestore, useAuth } from './provider';
 import { FirebaseClientProvider } from './client-provider';
+import { useCollection } from './firestore/use-collection';
 
 let firebaseApp: ReturnType<typeof initializeApp>;
 let auth: ReturnType<typeof getAuth>;
@@ -33,5 +34,6 @@ export {
   useFirebaseApp,
   useFirestore,
   useAuth,
+  useCollection,
   type User,
 };
