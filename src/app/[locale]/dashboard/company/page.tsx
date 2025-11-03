@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -17,7 +19,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { employees } from "@/lib/data";
 import { MoreHorizontal, PlusCircle, MapPin } from "lucide-react";
 import {
   DropdownMenu,
@@ -29,8 +30,12 @@ import {
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCollection } from "@/firebase";
+import type { Employee } from "@/lib/types";
 
 export default function CompanyPage() {
+  const { data: employees, loading, error } = useCollection<Employee>('companies/cpn_RND/employees');
+
   const locations = [
     { name: "Main Street Cafe", address: "123 Main St, Anytown, USA" },
     { name: "Downtown Brew", address: "456 Oak Ave, Anytown, USA" },
@@ -67,61 +72,65 @@ export default function CompanyPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="hidden w-[100px] sm:table-cell">
-                      <span className="sr-only">Avatar</span>
-                    </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Email
-                    </TableHead>
-                    <TableHead>
-                      <span className="sr-only">Actions</span>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {employees.map((employee) => (
-                    <TableRow key={employee.id}>
-                      <TableCell className="hidden sm:table-cell">
-                        <Avatar className="h-9 w-9">
-                          <AvatarImage src={employee.avatarUrl} alt={employee.name} />
-                          <AvatarFallback>{employee.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                      </TableCell>
-                      <TableCell className="font-medium">{employee.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{employee.role}</Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {employee.email}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              aria-haspopup="true"
-                              size="icon"
-                              variant="ghost"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+              {loading && <p>Loading employees...</p>}
+              {error && <p className="text-destructive">Error loading employees: {error.message}</p>}
+              {!loading && !error && (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="hidden w-[100px] sm:table-cell">
+                        <span className="sr-only">Avatar</span>
+                      </TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        Email
+                      </TableHead>
+                      <TableHead>
+                        <span className="sr-only">Actions</span>
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {employees?.map((employee) => (
+                      <TableRow key={employee.id}>
+                        <TableCell className="hidden sm:table-cell">
+                          <Avatar className="h-9 w-9">
+                            <AvatarImage src={employee.avatarUrl} alt={employee.name} />
+                            <AvatarFallback>{employee.name ? employee.name.charAt(0) : '?'}</AvatarFallback>
+                          </Avatar>
+                        </TableCell>
+                        <TableCell className="font-medium">{employee.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{employee.role}</Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {employee.email}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem>Edit</DropdownMenuItem>
+                              <DropdownMenuItem>Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,12 +1,7 @@
 import type { Employee, Shift, TimeOffRequest, SwapRequest } from './types';
 
-export const employees: Employee[] = [
-  { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
-  { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
-  { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
-  { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
-  { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
-];
+// This file is now being phased out. Data is being migrated to Firebase Firestore.
+// You can remove data from here as it's replaced by live data in the components.
 
 export const shifts: Shift[] = [
   { id: 's1', employeeId: '2', day: 'Mon', startTime: '08:00', endTime: '16:00', role: 'Barista', color: 'bg-emerald-200' },
@@ -31,5 +26,8 @@ export const swapRequests: SwapRequest[] = [
   { id: 'sw2', fromEmployeeId: '3', toEmployeeId: '2', shiftId: 's6', status: 'Approved' },
 ];
 
-export const getEmployeeById = (id: string) => employees.find(e => e.id === id);
+
+// Note: `employees` array has been removed as it is now fetched from Firestore.
+export const getEmployeeById = (employees: Employee[], id: string) => employees.find(e => e.id === id);
+
 export const getShiftById = (id: string) => shifts.find(s => s.id === id);

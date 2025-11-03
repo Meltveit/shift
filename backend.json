@@ -1,0 +1,70 @@
+{
+  "collections": {
+    "companies": {
+      "rules": "companies.rules",
+      "schema": {
+        "name": "string",
+        "industry": "string",
+        "employeeCount": "string",
+        "phone": "string",
+        "ownerUid": "string"
+      },
+      "subcollections": {
+        "employees": {
+          "schema": {
+            "name": "string",
+            "email": "string",
+            "role": "string",
+            "avatarUrl": "string"
+          }
+        },
+        "shifts": {
+          "schema": {
+            "employeeId": "string",
+            "day": "string",
+            "startTime": "string",
+            "endTime": "string",
+            "role": "string",
+            "color": "string"
+          }
+        },
+        "locations": {
+          "schema": {
+            "name": "string",
+            "address": "string"
+          }
+        },
+        "timeOffRequests": {
+          "schema": {
+            "employeeId": "string",
+            "startDate": "timestamp",
+            "endDate": "timestamp",
+            "type": "string",
+            "status": "string"
+          }
+        },
+        "swapRequests": {
+          "schema": {
+            "fromEmployeeId": "string",
+            "toEmployeeId": "string",
+            "shiftId": "string",
+            "status": "string"
+          }
+        },
+        "clockRecords": {
+          "schema": {
+            "employeeId": "string",
+            "clockIn": "timestamp",
+            "clockOut": "timestamp"
+          }
+        },
+        "subscription": {
+          "schema": {
+            "plan": "string",
+            "status": "string"
+          }
+        }
+      }
+    }
+  }
+}

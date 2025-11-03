@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { getEmployeeById, timeOffRequests } from "@/lib/data";
 import { Clock, Check, LogOut, Coffee } from "lucide-react";
 import { DashboardHeader } from '@/components/dashboard-header';
+import type { Employee } from '@/lib/types';
 
 export default function DashboardPage() {
   const [time, setTime] = useState(new Date());
@@ -33,6 +34,16 @@ export default function DashboardPage() {
     { time: 'Tomorrow, 9:00 AM - 5:00 PM', role: 'Barista', location: 'Main Street Cafe' },
     { time: 'Friday, 12:00 PM - 8:00 PM', role: 'Barista', location: 'Downtown Brew' },
   ];
+
+    // Note: This page still uses mock data. It will be updated to use Firestore soon.
+    const mockEmployees: Employee[] = [
+        { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
+        { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
+        { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
+        { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
+        { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
+    ];
+
 
   return (
     <>
@@ -86,7 +97,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="grid gap-4">
             {timeOffRequests.filter(req => req.status === 'Pending').map(request => {
-              const employee = getEmployeeById(request.employeeId);
+              const employee = getEmployeeById(mockEmployees, request.employeeId);
               return (
                 <div key={request.id} className="flex items-center gap-4">
                   <Avatar>

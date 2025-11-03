@@ -13,10 +13,20 @@ import { Button } from "@/components/ui/button";
 import { getEmployeeById, getShiftById, swapRequests } from "@/lib/data";
 import { PlusCircle, ArrowRight } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard-header";
+import type { Employee } from "@/lib/types";
 
 export default function SwapsPage() {
+    // Note: This page still uses mock data. It will be updated to use Firestore soon.
     const incomingRequests = swapRequests.filter(req => req.toEmployeeId === '1'); // Assuming current user is admin/manager '1'
     const myRequests = swapRequests.filter(req => req.fromEmployeeId === '1');
+    const mockEmployees: Employee[] = [
+        { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
+        { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
+        { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
+        { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
+        { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
+    ];
+
 
   return (
     <>
@@ -46,8 +56,8 @@ export default function SwapsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
                 {incomingRequests.map(req => {
-                    const fromEmployee = getEmployeeById(req.fromEmployeeId);
-                    const toEmployee = getEmployeeById(req.toEmployeeId);
+                    const fromEmployee = getEmployeeById(mockEmployees, req.fromEmployeeId);
+                    const toEmployee = getEmployeeById(mockEmployees, req.toEmployeeId);
                     const shift = getShiftById(req.shiftId);
                     return (
                          <Card key={req.id}>
@@ -90,8 +100,8 @@ export default function SwapsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
                 {myRequests.map(req => {
-                    const fromEmployee = getEmployeeById(req.fromEmployeeId);
-                    const toEmployee = getEmployeeById(req.toEmployeeId);
+                    const fromEmployee = getEmployeeById(mockEmployees, req.fromEmployeeId);
+                    const toEmployee = getEmployeeById(mockEmployees, req.toEmployeeId);
                     const shift = getShiftById(req.shiftId);
                     return (
                         <Card key={req.id}>

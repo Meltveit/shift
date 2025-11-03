@@ -5,10 +5,10 @@
 // This configuration is for a sample project and should be replaced with your
 // own project's configuration from the Firebase console.
 export const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "your-app-id",
+  "projectId": "studio-6387478031-6620a",
+  "appId": "1:204056142325:web:ae9916313e99ac069240bc",
+  "apiKey": "AIzaSyC9vxdcs-zLsMCYmuQykJ0oobWHBKM5XrE",
+  "authDomain": "studio-6387478031-6620a.firebaseapp.com",
+  "measurementId": "",
+  "messagingSenderId": "204056142325"
 };

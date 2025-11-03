@@ -24,11 +24,21 @@ import { getEmployeeById, shifts } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { DashboardHeader } from "@/components/dashboard-header";
 import AiSuggestions from "./AiSuggestions";
+import type { Employee } from "@/lib/types";
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const timeSlots = Array.from({ length: 15 }, (_, i) => `${String(i + 7).padStart(2, '0')}:00`);
 
 export default function SchedulePage() {
+    // Note: This page still uses mock data. It will be updated to use Firestore soon.
+    const mockEmployees: Employee[] = [
+        { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
+        { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
+        { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
+        { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
+        { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
+    ];
+
   return (
     <>
       <DashboardHeader
@@ -78,7 +88,7 @@ export default function SchedulePage() {
                             (s) => s.day === day && s.startTime === time
                           );
                           if (shift) {
-                            const employee = getEmployeeById(shift.employeeId);
+                            const employee = getEmployeeById(mockEmployees, shift.employeeId);
                             const duration =
                               (parseInt(shift.endTime.split(":")[0]) -
                                 parseInt(shift.startTime.split(":")[0]));
