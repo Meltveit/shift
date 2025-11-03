@@ -4,7 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster";
 import {NextIntlClientProvider} from 'next-intl';
-import {getMessages} from 'next-intl/server';
+import {getLocale, getMessages} from 'next-intl/server';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -15,12 +15,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params: {locale}
+  params
 }: Readonly<{
   children: React.ReactNode;
   params: {locale: string};
 }>) {
   const messages = await getMessages();
+  const locale = await getLocale();
 
   return (
     <html lang={locale} suppressHydrationWarning>
