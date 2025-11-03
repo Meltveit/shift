@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster";
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getMessages} from 'next-intl/server';
-import { FirebaseClientProvider } from '@/firebase';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 

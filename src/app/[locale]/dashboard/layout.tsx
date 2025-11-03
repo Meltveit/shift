@@ -52,6 +52,9 @@ export default function DashboardLayout({
   const user = useUser();
 
   useEffect(() => {
+    // If the user is not logged in, redirect to the login page.
+    // The `user` object will be `null` if not logged in, and an object if logged in.
+    // It will be `undefined` while loading.
     if (user === null) {
       router.push('/login');
     }
@@ -63,7 +66,8 @@ export default function DashboardLayout({
     router.push('/login');
   };
 
-  if (!user) {
+  // While the auth state is loading, you can show a loading indicator.
+  if (user === undefined) {
     return (
         <div className="flex h-screen items-center justify-center">
             <p>Loading...</p>
