@@ -7,11 +7,8 @@ import type { Employee, Shift, TimeOffRequest, SwapRequest } from './types';
 // Note: `shifts` array has been removed as it is now fetched from Firestore.
 export const shifts: Shift[] = [];
 
-export const timeOffRequests: TimeOffRequest[] = [
-  { id: 'to1', employeeId: '2', startDate: new Date('2024-08-05'), endDate: new Date('2024-08-07'), type: 'Vacation', status: 'Approved' },
-  { id: 'to2', employeeId: '4', startDate: new Date('2024-08-10'), endDate: new Date('2024-08-10'), type: 'Sick Leave', status: 'Pending' },
-  { id: 'to3', employeeId: '3', startDate: new Date('2024-09-01'), endDate: new Date('2024-09-05'), type: 'Vacation', status: 'Pending' },
-];
+// Note: `timeOffRequests` array has been removed as it is now fetched from Firestore.
+export const timeOffRequests: TimeOffRequest[] = [];
 
 export const swapRequests: SwapRequest[] = [
   { id: 'sw1', fromEmployeeId: '2', toEmployeeId: '5', shiftId: 's5', status: 'Pending' },

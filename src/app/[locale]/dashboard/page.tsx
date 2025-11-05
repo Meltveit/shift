@@ -6,20 +6,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { getEmployeeById, timeOffRequests } from "@/lib/data";
 import { Clock, Check, LogOut, Coffee } from "lucide-react";
 import { DashboardHeader } from '@/components/dashboard-header';
-import type { Employee } from '@/lib/types';
+import type { Employee, TimeOffRequest } from '@/lib/types';
+import { useUser, useFirestore, useCollection } from '@/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+
 
 export default function DashboardPage() {
+  const user = useUser();
+  const firestore = useFirestore();
   const [time, setTime] = useState(new Date());
   const [isClockedIn, setIsClockedIn] = useState(false);
   const [clockInTime, setClockInTime] = useState<Date | null>(null);
+  const [companyId, setCompanyId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const findCompany = async () => {
+      if (user && firestore) {
+        const companiesCollection = collection(firestore, 'companies');
+        const q = query(companiesCollection, where('ownerUid', '==', user.uid));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setCompanyId(querySnapshot.docs[0].id);
+        }
+      }
+    };
+    findCompany();
+  }, [user, firestore]);
+  
+  const employeesPath = companyId ? `companies/${companyId}/employees` : undefined;
+  const { data: employees, loading: loadingEmployees } = useCollection<Employee>(employeesPath);
+
+  const timeOffPath = companyId ? `companies/${companyId}/timeOffRequests` : undefined;
+  const { data: timeOffRequests, loading: loadingTimeOff } = useCollection<TimeOffRequest>(timeOffPath);
 
   const handleClockInOut = () => {
     if (isClockedIn) {
@@ -35,22 +60,17 @@ export default function DashboardPage() {
     { time: 'Friday, 12:00 PM - 8:00 PM', role: 'Barista', location: 'Downtown Brew' },
   ];
 
-    // Note: This page still uses mock data. It will be updated to use Firestore soon.
-    const mockEmployees: Employee[] = [
-        // This mock data is now removed from its original source and is temporarily here
-        // so the page doesn't break. It will be replaced with Firestore data soon.
-        { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
-        { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
-        { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
-        { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
-        { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
-    ];
+  const getEmployeeById = (id: string): Employee | undefined => {
+    if (!employees) return undefined;
+    return employees.find(e => e.id === id);
+  }
 
+  const welcomeName = user?.displayName?.split(' ')[0] || 'there';
 
   return (
     <>
       <DashboardHeader
-        title="Welcome, Sarah!"
+        title={`Welcome, ${welcomeName}!`}
         description={`Today is ${time.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`}
       />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -98,24 +118,31 @@ export default function DashboardPage() {
             <CardDescription>Requests needing review.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-            {timeOffRequests.filter(req => req.status === 'Pending').map(request => {
-              const employee = getEmployeeById(mockEmployees, request.employeeId);
+            {loadingTimeOff && <p>Loading requests...</p>}
+            {timeOffRequests && timeOffRequests.filter(req => req.status === 'Pending').map(request => {
+              const employee = getEmployeeById(request.employeeId);
+              // Firestore Timestamps need to be converted to JS Dates
+              const startDate = request.startDate.toDate ? request.startDate.toDate() : new Date(request.startDate);
+              const endDate = request.endDate.toDate ? request.endDate.toDate() : new Date(request.endDate);
               return (
                 <div key={request.id} className="flex items-center gap-4">
                   <Avatar>
                     <AvatarImage src={employee?.avatarUrl} alt={employee?.name} />
-                    <AvatarFallback>{employee?.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{employee?.name ? employee.name.charAt(0) : '?'}</AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium">{employee?.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {request.type}: {request.startDate.toLocaleDateString()} - {request.endDate.toLocaleDateString()}
+                      {request.type}: {startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}
                     </p>
                   </div>
                   <Badge variant="secondary" className="ml-auto">Pending</Badge>
                 </div>
               );
             })}
+             {!loadingTimeOff && timeOffRequests && timeOffRequests.filter(req => req.status === 'Pending').length === 0 && (
+                <p className="text-sm text-muted-foreground">No pending requests.</p>
+            )}
           </CardContent>
         </Card>
       </div>

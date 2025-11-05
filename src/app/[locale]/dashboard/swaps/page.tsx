@@ -1,4 +1,5 @@
 
+
 import {
   Card,
   CardContent,
@@ -10,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getEmployeeById, getShiftById, swapRequests } from "@/lib/data";
+import { getShiftById, swapRequests } from "@/lib/data";
 import { PlusCircle, ArrowRight } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard-header";
 import type { Employee } from "@/lib/types";
@@ -19,15 +20,12 @@ export default function SwapsPage() {
     // Note: This page still uses mock data. It will be updated to use Firestore soon.
     const incomingRequests = swapRequests.filter(req => req.toEmployeeId === '1'); // Assuming current user is admin/manager '1'
     const myRequests = swapRequests.filter(req => req.fromEmployeeId === '1');
-    const mockEmployees: Employee[] = [
-        // This mock data is now removed from its original source and is temporarily here
-        // so the page doesn't break. It will be replaced with Firestore data soon.
-        { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
-        { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
-        { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
-        { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
-        { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
-    ];
+    
+    // This needs to be replaced by a Firestore query
+    const mockEmployees: Employee[] = [];
+    
+    // This needs to be replaced by a Firestore query
+    const getEmployeeById = (employees: Employee[], id: string) => employees.find(e => e.id === id);
 
 
   return (

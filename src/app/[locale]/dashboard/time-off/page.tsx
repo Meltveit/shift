@@ -1,4 +1,5 @@
 
+
 import {
   Card,
   CardContent,
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getEmployeeById, timeOffRequests } from "@/lib/data";
+import { timeOffRequests } from "@/lib/data";
 import { PlusCircle } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Calendar } from "@/components/ui/calendar";
@@ -37,15 +38,11 @@ export default function TimeOffPage() {
     { type: "Personal", used: 1, total: 5 },
   ];
     // Note: This page still uses mock data. It will be updated to use Firestore soon.
-    const mockEmployees: Employee[] = [
-        // This mock data is now removed from its original source and is temporarily here
-        // so the page doesn't break. It will be replaced with Firestore data soon.
-        { id: '1', name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Manager', avatarUrl: 'https://picsum.photos/seed/1/100/100' },
-        { id: '2', name: 'David Chen', email: 'david.c@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/2/100/100' },
-        { id: '3', name: 'Maria Garcia', email: 'maria.g@example.com', role: 'Cashier', avatarUrl: 'https://picsum.photos/seed/3/100/100' },
-        { id: '4', name: 'Kevin Smith', email: 'kevin.s@example.com', role: 'Chef', avatarUrl: 'https://picsum.photos/seed/4/100/100' },
-        { id: '5', name: 'Emily Johnson', email: 'emily.j@example.com', role: 'Barista', avatarUrl: 'https://picsum.photos/seed/5/100/100' },
-    ];
+    // This needs to be replaced by a Firestore query
+    const mockEmployees: Employee[] = [];
+    
+    // This needs to be replaced by a Firestore query
+    const getEmployeeById = (employees: Employee[], id: string) => employees.find(e => e.id === id);
 
 
   return (
