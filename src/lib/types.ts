@@ -19,8 +19,8 @@ export type Shift = {
 export type TimeOffRequest = {
   id: string;
   employeeId: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: any; // Using `any` to avoid timestamp issues for now
+  endDate: any;
   type: 'Vacation' | 'Sick Leave' | 'Personal';
   status: 'Pending' | 'Approved' | 'Denied';
 };
@@ -31,4 +31,10 @@ export type SwapRequest = {
   toEmployeeId: string;
   shiftId: string;
   status: 'Pending' | 'Approved' | 'Denied';
+};
+
+export type Location = {
+    id: string;
+    name: string;
+    address: string;
 };
